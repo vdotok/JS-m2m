@@ -19,18 +19,17 @@ import { fromEvent, of } from 'rxjs';
   styleUrls: ['./add-group.component.scss']
 })
 export class AddGroupComponent implements OnInit {
+  @Output() changeEvent = new EventEmitter<string>();
+  @ViewChild('searchInput') searchInput: ElementRef;
   currentUserName = StorageService.getAuthUsername();
   currentUserData = StorageService.getUserData();
-  @Output() changeEvent = new EventEmitter<string>();
   form: FormGroup;
   loading = true;
   AllUsers = [];
-  group_title = '';
-  groupnameError = '';
-  dialogRef;
-  selectedUsers = [];
-  @ViewChild('searchInput') searchInput: ElementRef;
   CopyAllUsers = [];
+  groupnameError = '';
+  dialogRef: any;
+  selectedUsers = [];
   constructor(
     public pubsubService: PubsubService,
     private svc: BaseService,
@@ -111,7 +110,6 @@ export class AddGroupComponent implements OnInit {
     } else if (this.selectedUsers.length > 4) {
       this.groupnameError = 'Participants cannot be more than 4';
     }
-    console.error('groupnameError', this.groupnameError);
     this.changeDetector.detectChanges();
   }
 
@@ -121,9 +119,6 @@ export class AddGroupComponent implements OnInit {
     this.changeDetector.detectChanges();
     if (!this.selectedUsers.length) {
       this.groupnameError = 'Please Select Contacts';
-      return;
-    } else if (this.selectedUsers.length == 1) {
-      this.groupnameError = 'Please Select at leat 2 Participants';
       return;
     } else if (this.selectedUsers.length > 4) {
       this.groupnameError = 'Participants cannot be more than 4';
@@ -168,8 +163,8 @@ export class AddGroupComponent implements OnInit {
     this.loading = true;
     this.changeDetector.detectChanges();
     let data = {
-      "participants": useridArray,
-      "auto_created": useridArray.length > 1 ? 0 : 1,
+      participants: useridArray,
+      auto_created: useridArray.length > 1 ? 0 : 1,
       ...this.form.value
     }
     this.svc.post('CreateGroup', data).subscribe(v => {

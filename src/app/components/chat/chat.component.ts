@@ -17,42 +17,39 @@ import FormsHandler from 'src/app/shared/FormsHandler/FormsHandler';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-  loading = true;
-  groupForm: FormGroup;
-  AllGroups = [];
-  AllUsers = [];
-  activeChat: any = {
-    chatHistory: []
-  };
+  @ViewChild('noCall') noCall: TemplateRef<any>;
+  @ViewChild('groupIncommingAudioCall') groupIncommingAudioCall: TemplateRef<any>;
+  @ViewChild('groupOutgoingAudioCall') groupOutgoingAudioCall: TemplateRef<any>;
+  @ViewChild('groupOngoingAudioCall') groupOngoingAudioCall: TemplateRef<any>;
+  @ViewChild('groupIncommingVideoCall') groupIncommingVideoCall: TemplateRef<any>;
+  @ViewChild('groupVideoCall') groupVideoCall: TemplateRef<any>;
+
+  @ViewChild('searchInput') searchInput: ElementRef;
   currentUserName = StorageService.getAuthUsername();
   currentUserData = StorageService.getUserData();
   threadType = 'THREAD';
   screen = 'CHAT';
-  isActiveThread = false;
-  dialogRef;
+  dialogRef: any;
+  loading = true;
+  groupForm: FormGroup;
+  AllGroups = [];
+  AllUsers = [];
+  countDownTime: Subscription;
+  callTime = 0;
+  groupOutgoingVideoCall = false;
+  activeChat: any = {
+    chatHistory: []
+  };
   calling = {
     participant: [],
     call_type: 'video',
     templateName: 'noCall',
     callerName: ''
   }
-  countDownTime: Subscription;
-  callTime = 0;
   settings = {
-    isOnCamara: true,
-    isOnMicrophone: true,
     isOnInProgressCamara: true,
     isOnInProgressMicrophone: true
   }
-
-  @ViewChild('noCall') noCall: TemplateRef<any>;
-  @ViewChild('groupIncommingAudioCall') groupIncommingAudioCall: TemplateRef<any>;
-  @ViewChild('groupOutgoingAudioCall') groupOutgoingAudioCall: TemplateRef<any>;
-  @ViewChild('groupOngoingAudioCall') groupOngoingAudioCall: TemplateRef<any>;
-  @ViewChild('groupIncommingVideoCall') groupIncommingVideoCall: TemplateRef<any>;
-  @ViewChild('groupOutgoingVideoCall') groupOutgoingVideoCall: TemplateRef<any>;
-  @ViewChild('groupOngoingVideoCall') groupOngoingVideoCall: TemplateRef<any>;
-  @ViewChild('searchInput') searchInput: ElementRef;
 
   get selectedTemplate() {
     const templateList = {
@@ -61,8 +58,7 @@ export class ChatComponent implements OnInit {
       groupOutgoingAudioCall: this.groupOutgoingAudioCall,
       groupOngoingAudioCall: this.groupOngoingAudioCall,
       groupIncommingVideoCall: this.groupIncommingVideoCall,
-      groupOutgoingVideoCall: this.groupOutgoingVideoCall,
-      groupOngoingVideoCall: this.groupOngoingVideoCall
+      groupVideoCall: this.groupVideoCall
     }
     return templateList[this.calling['templateName']];
   }
@@ -90,6 +86,11 @@ export class ChatComponent implements OnInit {
         this.AllUsers = v.users;
       }
     });
+
+    this.pubsubService.Client.on("register", response => {
+      console.error("register response", response);
+    });
+
     this.pubsubService.Client.on("connected", response => {
       console.error("connected response", response);
       if (!this.AllGroups.length) {
@@ -101,16 +102,16 @@ export class ChatComponent implements OnInit {
       console.error("groupCall response", response);
       switch (response.type) {
         case "CALL_RECEIVED":
-          this.calling['callerName'] = this.findUserName(response.from);
+          this.screen = 'MSG'
+          this.calling.callerName = this.findUserName(response.from);
           this.calling.templateName = response.call_type == 'video' ? 'groupIncommingVideoCall' : 'groupIncommingAudioCall';
           this.calling.call_type = response.call_type;
           this.changeDetector.detectChanges();
-          this.screen = 'MSG';
           break;
         case "NEW_PARTICIPANT":
-          this.calling.templateName = this.calling.call_type == 'video' ? 'groupOngoingVideoCall' : 'groupOngoingAudioCall';
+          this.calling.templateName = this.calling.call_type == 'video' ? 'groupVideoCall' : 'groupOngoingAudioCall';
+          this.groupOutgoingVideoCall = false;
           this.addParticipant(response);
-          // this.startWatch();
           break;
         case "PARTICIPANT_LEFT":
           this.removeParticipant(response);
@@ -121,17 +122,12 @@ export class ChatComponent implements OnInit {
           break;
       }
     });
-    this.pubsubService.Client.on("register", response => {
-      console.error("register response", response);
-    });
+
   }
 
   ngAfterViewInit(): void {
     this.pubsubService.Client.on("authentication_error", (res: any) => {
       this.toastr.error("SDK Authentication Error", "Opps");
-    });
-    this.pubsubService.Client.on("disconnect", (response) => {
-      console.error("disconnect", response);
     });
   }
 
@@ -161,7 +157,6 @@ export class ChatComponent implements OnInit {
 
   editGroup() {
     FormsHandler.validateForm(this.groupForm);
-    console.error("this.groupForm.", this.groupForm.invalid);
     if (this.groupForm.invalid || this.loading) return;
     const playload = this.groupForm.value;
     this.loading = true;
@@ -192,11 +187,6 @@ export class ChatComponent implements OnInit {
     });
   }
 
-
-  findChatThread(ref_id) {
-    return FindArrayObject(this.AllGroups, 'ref_id', ref_id);
-  }
-
   findUserName(ref_id) {
     const user = FindArrayObject(this.AllUsers, 'ref_id', ref_id);
     return user ? user.full_name : 'Group A';
@@ -215,7 +205,6 @@ export class ChatComponent implements OnInit {
   }
 
   logout() {
-    this.pubsubService.Disconnect();
     StorageService.clearLocalStorge();
     this.router.navigate(['login']);
   }
@@ -223,13 +212,11 @@ export class ChatComponent implements OnInit {
   rejectedCall() {
     this.calling.templateName = 'noCall';
     this.changeDetector.detectChanges();
-    this.pubsubService.Client.endCall();
+    this.pubsubService.Client.leaveGroupCall();
   }
 
   resetCall() {
     this.settings = {
-      isOnCamara: false,
-      isOnMicrophone: false,
       isOnInProgressCamara: true,
       isOnInProgressMicrophone: true
     }
@@ -240,35 +227,34 @@ export class ChatComponent implements OnInit {
       callerName: ''
     }
     this.callTime = 0;
+    this.screen = 'CHAT';
+    this.groupOutgoingVideoCall = false;
     if (this.countDownTime) this.countDownTime.unsubscribe();
     this.changeDetector.detectChanges();
-    this.screen = 'CHAT';
   }
 
   stopCall() {
     this.calling.templateName = 'noCall';
-    this.pubsubService.endCall();
+    this.pubsubService.leaveGroupCall();
     this.resetCall();
     this.changeDetector.detectChanges();
-    console.error("stopCall");
   }
 
-  inCall() {
+  inCall(): boolean {
     return this.calling.templateName != 'noCall'
   }
 
-
   acceptcall() {
     if (this.inProgressCall()) return;
-    this.calling.templateName = this.calling.call_type == 'video' ? 'groupOngoingVideoCall' : 'groupOngoingAudioCall';
+    this.calling.templateName = this.calling.call_type == 'video' ? 'groupVideoCall' : 'groupOngoingAudioCall';
     this.changeDetector.detectChanges();
     const params = {
       localVideo: document.getElementById("localVideo"),
       call_type: this.calling.call_type
     }
     this.changeDetector.detectChanges();
+    this.groupOutgoingVideoCall = false;
     this.pubsubService.joinGroupCall(params);
-    // this.startWatch();
     this.changeDetector.detectChanges();
   }
 
@@ -281,7 +267,8 @@ export class ChatComponent implements OnInit {
   startVideoCall(group) {
     if (this.inCall()) return;
     this.screen = 'MSG';
-    this.calling.templateName = 'groupOutgoingVideoCall';
+    this.groupOutgoingVideoCall = true;
+    this.calling.templateName = 'groupVideoCall';
     this.calling['callerName'] = group['chatTitle'];
     this.changeDetector.detectChanges();
     const p = group['participants'].filter(g => g.ref_id != this.currentUserName).map(g => g.ref_id);
@@ -290,7 +277,6 @@ export class ChatComponent implements OnInit {
       localVideo: document.getElementById("localVideo"),
       to: [...p],
     }
-    console.error("startVideoCall", params);
     this.pubsubService.groupCall(params);
   }
 
@@ -306,13 +292,11 @@ export class ChatComponent implements OnInit {
       localVideo: document.getElementById("localAudio"),
       to: [...participants],
     }
-    console.log("startVideoCall", params);
     this.pubsubService.groupCall(params);
   }
 
   changeSettings(filed) {
     this.settings[filed] = !this.settings[filed];
-    console.error("this.settings[filed]", this.settings[filed]);
     switch (filed) {
       case 'isOnInProgressCamara':
         this.settings[filed] ? this.pubsubService.setCameraOn() : this.pubsubService.setCameraOff();
@@ -323,12 +307,15 @@ export class ChatComponent implements OnInit {
         break;
       case 'isOnInProgressMicrophone':
         this.settings[filed] ? this.pubsubService.setMicUnmute() : this.pubsubService.setMicMute();
+        const enabled = this.settings[filed];
+        const audiotrack: any = (<HTMLInputElement>document.getElementById("localAudio"));
+        audiotrack.audioTracks[0].enabled = enabled;
         break;
     }
   }
 
   isShowVideo() {
-    return this.calling.templateName != 'VideoCallInProgress' || this.calling.call_type != 'video';
+    return this.calling.templateName != 'groupVideoCall' || this.calling.call_type != 'video';
   }
 
   addParticipant(response) {
@@ -352,11 +339,7 @@ export class ChatComponent implements OnInit {
   }
 
   inProgressCall() {
-    return this.calling.templateName == 'groupOngoingVideoCall' || this.calling.templateName == 'groupOngoingAudioCall';
-  }
-
-  isshownewtemp() {
-    return this.calling.templateName == 'groupOutgoingVideoCall' || this.calling.templateName == 'groupOngoingVideoCall'
+    return this.calling.templateName == 'groupVideoCall' || this.calling.templateName == 'groupOngoingAudioCall';
   }
 
   isHideThread() {

@@ -1,19 +1,16 @@
-import { Injectable, OnDestroy, Output } from '@angular/core';
+import { Injectable, Output } from '@angular/core';
 import { StorageService } from './storage.service';
 declare const CVDOTOK: any;
 
 @Injectable()
 export class PubsubService {
-  @Output()
-  public Client: any;
-
-  constructor() {
-  }
+  @Output() public Client: any;
+  constructor() { }
 
   public initConfigure(): void {
     this.Client = new CVDOTOK.ManyToMany({
-      projectID: "U6WM5",
-      secret: "ff0682f386006952e6cc8a4e831e81ce",
+      projectID: "15Q89R",
+      secret: "3d9686b635b15b5bc2d19800407609fa",
     });
     this.Client.on("connected", (res) => {
       let user = StorageService.getUserData();
@@ -24,10 +21,6 @@ export class PubsubService {
     });
   }
 
-  public Disconnect(): void {
-    // this.Client.Disconnect();
-  }
-
   groupCall(params): void {
     this.Client.GroupCall(params);
   }
@@ -36,11 +29,7 @@ export class PubsubService {
     this.Client.JoinGroupCall(params);
   }
 
-  rejectCall(): void {
-    this.Client.RejectCall();
-  }
-
-  endCall(): void {
+  leaveGroupCall(): void {
     this.Client.LeaveGroupCall();
   }
 
