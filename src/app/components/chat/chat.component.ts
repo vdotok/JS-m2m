@@ -23,7 +23,6 @@ export class ChatComponent implements OnInit {
   @ViewChild('groupOngoingAudioCall') groupOngoingAudioCall: TemplateRef<any>;
   @ViewChild('groupIncommingVideoCall') groupIncommingVideoCall: TemplateRef<any>;
   @ViewChild('groupVideoCall') groupVideoCall: TemplateRef<any>;
-
   @ViewChild('searchInput') searchInput: ElementRef;
   currentUserName = StorageService.getAuthUsername();
   currentUserData = StorageService.getUserData();
@@ -146,6 +145,10 @@ export class ChatComponent implements OnInit {
   }
 
   openModal(content, group) {
+    if (group.auto_created) {
+      alert("You Can not change personal chat name");
+      return;
+    }
     group['group_id'] = group.id
     this.groupForm.reset(group);
     this.dialogRef = this.modalService.open(content, {
@@ -176,7 +179,7 @@ export class ChatComponent implements OnInit {
       this.loading = false;
       if (v && v.status == 200) {
         this.AllGroups = v.groups.map(chat => {
-          chat['chatTitle'] = chat.group_title;
+          chat['chatTitle'] = chat.auto_created ? chat.participants[0]['full_name'] : chat.group_title;
           chat['key'] = chat.channel_key;
           chat['channel'] = chat.channel_name;
           chat['ref_id'] = chat['participants'] && chat['participants'][0].ref_id;
@@ -309,7 +312,9 @@ export class ChatComponent implements OnInit {
         this.settings[filed] ? this.pubsubService.setMicUnmute() : this.pubsubService.setMicMute();
         const enabled = this.settings[filed];
         const audiotrack: any = (<HTMLInputElement>document.getElementById("localAudio"));
-        audiotrack.audioTracks[0].enabled = enabled;
+        if (audiotrack && audiotrack.audioTracks) {
+          audiotrack.audioTracks[0].enabled = enabled;
+        }
         break;
     }
   }
@@ -325,12 +330,18 @@ export class ChatComponent implements OnInit {
     setTimeout(() => {
       this.changeDetector.detectChanges();
       this.pubsubService.setParticipantVideo(response.participant, document.getElementById(response.participant));
+      const user = this.findUserName(response.participant);
+      const textmsg = user + ' ' + 'has joined';
+      this.toastr.success(textmsg);
     });
     this.changeDetector.detectChanges();
   }
 
   removeParticipant(response) {
     const index = this.calling.participant.findIndex(user => user.ref_id == response.participant);
+    const user = this.findUserName(response.participant);
+    const textmsg = user + ' ' + 'has left';
+    this.toastr.success(user);
     this.calling.participant.splice(index, 1);
     if (!this.calling.participant.length) {
       this.resetCall();
