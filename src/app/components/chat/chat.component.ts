@@ -36,6 +36,7 @@ export class ChatComponent implements OnInit {
   countDownTime: Subscription;
   callTime = 0;
   groupOutgoingVideoCall = false;
+  sdkconnected = false;
   activeChat: any = {
     chatHistory: []
   };
@@ -91,6 +92,7 @@ export class ChatComponent implements OnInit {
     });
 
     this.pubsubService.Client.on("connected", response => {
+      this.sdkconnected = true;
       console.error("connected response", response);
       if (!this.AllGroups.length) {
         this.getAllGroups();
