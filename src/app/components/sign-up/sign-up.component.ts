@@ -16,7 +16,7 @@ export class SignUpComponent implements OnInit {
 
   loginForm: FormGroup;
   loading = false;
-  formError;
+  formError: string = '';
 
   constructor(
     private router: Router,
@@ -59,7 +59,7 @@ export class SignUpComponent implements OnInit {
         StorageService.setAuthToken(v.auth_token);
         StorageService.setAuthUsername(v.ref_id);
         this.pubsubService.initConfigure();
-        this.router.navigate(['chat']);
+        this.router.navigate(['call']);
         this.loginForm.reset();
       } else {
         this.formError = v.message;
