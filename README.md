@@ -122,7 +122,18 @@ user provided config to init SDK
     }
 
     if (response.type == "PARTICIPANT_STATUS") {
-    //when user turn on off camara
+     <!-- when user turn on off camara Below is response that will be received -->
+         
+    <!--    
+       response = {
+          audio_status: 1
+          message: "Participant Status"
+          participant: "09529f186637f2a67bc682a33b42af31"
+          type: "PARTICIPANT_STATUS"
+          video_status: 1
+       }
+    -->    
+          
     }
 
 });
