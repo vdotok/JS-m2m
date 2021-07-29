@@ -234,6 +234,8 @@ export class CallComponent implements OnInit {
     this.callTime = 0;
     this.screen = 'LISTING';
     this.groupOutgoingVideoCall = false;
+    this.hideCallContainer2 = false;
+    this.hideCallContainer3 = true;
     if (this.countDownTime) this.countDownTime.unsubscribe();
     this.changeDetector.detectChanges();
   }
@@ -328,6 +330,24 @@ export class CallComponent implements OnInit {
   addParticipant(response) {
     const user = this.AllUsers.find(user => user.ref_id == response.participant);
     this.calling.participant.push(user);
+
+
+    setTimeout(() => {
+      this.calling.participant.push(user);
+    }, 1000);
+
+    setTimeout(() => {
+      this.calling.participant.push(user);
+    }, 2000);
+
+    setTimeout(() => {
+      this.calling.participant.push(user);
+    }, 3000);
+
+    setTimeout(() => {
+      this.calling.participant.push(user);
+    }, 4000);
+
     this.changeDetector.detectChanges();
     setTimeout(() => {
       this.changeDetector.detectChanges();
@@ -342,8 +362,10 @@ export class CallComponent implements OnInit {
   removeParticipant(response) {
     const index = this.calling.participant.findIndex(user => user.ref_id == response.participant);
     const user = this.findUserName(response.participant);
-    const textmsg = user + ' ' + 'has left';
-    this.toastr.success(textmsg);
+    if (user && user != 'Group A') {
+      const textmsg = user + ' ' + 'has left';
+      this.toastr.success(textmsg);
+    }
     this.calling.participant.splice(index, 1);
     if (!this.calling.participant.length) {
       this.resetCall();
@@ -362,5 +384,36 @@ export class CallComponent implements OnInit {
   isHideChatScreen() {
     return isMobile() ? this.screen != 'MAIN' : false;
   }
+
+  isHideRemoteVideo(): boolean {
+    const ishide = !(this.calling.templateName == 'groupVideoCall' && this.calling.call_type == 'video');
+    return ishide;
+  }
+
+
+  hideCallContainer2 = false;
+  hideCallContainer3 = true;
+
+  previousScreen() {
+    this.hideCallContainer2 = false;
+    this.hideCallContainer3 = true;
+  }
+
+  nextScreen() {
+    this.hideCallContainer2 = true;
+    this.hideCallContainer3 = false;
+  }
+
+  isHidePaginationBtn(): boolean {
+    return this.calling.templateName != 'groupVideoCall' || this.calling.participant.length < 5;
+  }
+
+  isHideAudioPagination = false;
+
+  isHideAudioPaginationBtn(): boolean {
+    this.isHideAudioPagination = this.calling.templateName != 'groupOngoingAudioCall ' || this.calling.participant.length < 5;
+    return this.isHideAudioPagination;
+  }
+
 
 }

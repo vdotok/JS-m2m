@@ -1524,8 +1524,7 @@ p {
   padding: 0;
   margin: 0;
 }
-.addGrpSub {
-}
+
 .contactListCard {
   height: 55px;
   min-height: 55px;
@@ -2042,4 +2041,152 @@ p {
 
 .localNameHolder {
   display: none !important;
+}
+
+.singleVideo {
+  height: 50%;
+  width: 50%;
+  min-width: 50%;
+  background-color: #666666;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+.singleVideoAlone {
+  height: 100%;
+  width: 100%;
+  min-width: 100%;
+  background-color: #666666;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 10008;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+.nameContainer {
+  display: flex;
+  background-color: #292929;
+  padding: 5px;
+  border-radius: 3px;
+  margin-left: 5px;
+  margin-right: 5px;
+  align-items: center;
+  color: white;
+}
+.newdetailsWrapper {
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 5px;
+  display: flex;
+  z-index: 10002;
+  width: 100%;
+}
+.bigName {
+  font-family: "manrope-bold";
+  z-index: 10000;
+  text-align: center;
+  letter-spacing: -0.3px;
+  font-size: 30px;
+
+  /* White/100% */
+
+  color: #ffffff;
+}
+.callContainer2 {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 1000;
+  background-color: #e0ebe9;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  /* padding-top: 60px;
+  padding-bottom: 30px; */
+}
+
+.callButtonsContainer2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: "space-between";
+
+  /* max-width: 50%; */
+  z-index: 10009;
+  width: "100%";
+  /* width: 100% !important; */
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 30px;
+  /* align-self: center; */
+
+  /* margin-top: 40px; */
+}
+
+.callContainer3 {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 1000;
+  background-color: #e0ebe9;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* align-items: center; */
+  flex-wrap: wrap;
+  visibility: visible;
+  /* padding-top: 60px;
+  padding-bottom: 30px; */
+}
+.nextPrevContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.nextPrevButton {
+  display: flex;
+  flex-direction: row;
+}
+.prevButton {
+  height: 40px;
+  width: 40px;
+  background-color: #616162;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  cursor: pointer;
+}
+.nextButton {
+  height: 40px;
+  width: 40px;
+  background-color: #616162;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  cursor: pointer;
+}
+.contIcon {
+  height: 25px;
+  width: 25px;
+  object-fit: contain;
 }
