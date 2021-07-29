@@ -54,9 +54,7 @@
   </div>
   <div class="col-sm-8 rightSide" [hidden]="isHideChatScreen()">
     <div class="rightSideHeader">
-      <p class="roomNameText text-capitalize" *ngIf="calling.callerName">{{ calling.callerName }} ....{{ calling.templateName }}
-        .... {{ isHideAudioPagination }}
-        .... {{ (calling.templateName != 'groupOngoingAudioCall ' || calling.participant.length < 5) }}
+      <p class="roomNameText text-capitalize" *ngIf="calling.callerName">{{ calling.callerName }}
       </p>
       <p class="text-capitalize" style="margin-left: 25px;font-family: inter-regular;font-size: 21px;" *ngIf="callTime">
         {{ callTime | formatTime }}
