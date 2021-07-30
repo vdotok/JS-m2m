@@ -54,7 +54,8 @@
   </div>
   <div class="col-sm-8 rightSide" [hidden]="isHideChatScreen()">
     <div class="rightSideHeader">
-      <p class="roomNameText text-capitalize" *ngIf="calling.callerName">{{ calling.callerName }}
+      <p class="roomNameText text-capitalize" *ngIf="calling.callerName">
+        {{ calling.callerName }}
       </p>
       <p class="text-capitalize" style="margin-left: 25px;font-family: inter-regular;font-size: 21px;" *ngIf="callTime">
         {{ callTime | formatTime }}
@@ -211,25 +212,26 @@
             {{ currentUserData.full_name }}</span>
         </div>
       </div>
-      <div class="singleVideo" *ngFor="let user of calling.participant | slice:0:4; let i = index;">
+      <div class="singleVideo" *ngFor="let user of calling.participant | slice:0:3;let i=index">
+
         <audio [id]="user.ref_id" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
           <source src="./assets/images/vidd.mp4" type="video/mp4" />
         </audio>
-        <p class="bigName">{{ user.full_name }}</p>
+        <p class="bigName"> {{ user.full_name }}</p>
         <div class="newdetailsWrapper">
           <span class="nameContainer">
             {{ user.full_name }}
           </span>
         </div>
+
       </div>
     </div>
-
     <!-- //2nd container -->
     <div class="callContainer3" style="overflow: auto" [hidden]="hideCallContainer3">
-      <div class="singleVideo" *ngFor="let user of calling.participant | slice:4:8; let i = index;">
-        <audio autoplay muted height="100%" width="100%" style="object-fit: fill; position: absolute; z-index: 10001"
-          autoplay>
+      <div class="singleVideo" *ngFor="let user of calling.participant | slice:3:7; let i = index;">
+        <audio [id]="user.ref_id" autoplay muted height="100%" width="100%"
+          style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
         </audio>
         <p class="bigName">{{ user.full_name }}</p>
         <div class="newdetailsWrapper">
@@ -237,13 +239,11 @@
         </div>
       </div>
     </div>
-
     <!-- <div style="width: 100%; justify-content: center" class="callButtonsContainer2">
       <img src="./assets/images/decline-button.png" class="responseButtonImg" (click)="stopCall()" />
       <img src="./assets/images/microphone-{{ settings.isOnInProgressMicrophone ? 'on.png' :'off.png'}}"
         class="responseButtonImg" (click)="changeSettings('isOnInProgressMicrophone')" />
     </div> -->
-
     <div class="groupCallControllContainer">
       <div style="width: 150px;" class="callButtonsContainer">
         <img src="./assets/images/decline-button.png" class="responseButtonImg" (click)="stopCall()" />
@@ -251,18 +251,17 @@
           class="responseButtonImg" (click)="changeSettings('isOnInProgressMicrophone')" />
       </div>
     </div>
+  </div>
 
-    <div class="nextPrevContainer" [hidden]="isHideAudioPaginationBtn()">
-      <div class="nextPrevButton">
-        <div (click)="previousScreen()" class="prevButton">
-          <img src="./assets/images/leftPolygon.png" class="contIcon" />
-        </div>
-        <div (click)="nextScreen()" class="nextButton">
-          <img src="./assets/images/rightPolygon.png" class="contIcon" />
-        </div>
+  <div class="nextPrevContainer" [hidden]="isHideAudioPaginationBtn()">
+    <div class="nextPrevButton">
+      <div (click)="previousScreen()" class="prevButton">
+        <img src="./assets/images/leftPolygon.png" class="contIcon" />
+      </div>
+      <div (click)="nextScreen()" class="nextButton">
+        <img src="./assets/images/rightPolygon.png" class="contIcon" />
       </div>
     </div>
-
   </div>
 
   <!-- <div style="border-radius: 0px" class="messagesBox noPadding">
@@ -345,7 +344,7 @@
             {{ currentUserData.full_name }}</span>
         </div>
       </div>
-      <div class="singleVideo" *ngFor="let user of calling.participant | slice:0:4; let i = index;">
+      <div class="singleVideo" *ngFor="let user of calling.participant | slice:0:3; let i = index;">
         <video [id]="user.ref_id" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
           <source src="./assets/images/vidd.mp4" type="video/mp4" />
@@ -361,7 +360,7 @@
 
     <!-- //2nd container -->
     <div class="callContainer3" style="overflow: auto" [hidden]="hideCallContainer3">
-      <div class="singleVideo" *ngFor="let user of calling.participant | slice:4:8; let i = index;">
+      <div class="singleVideo" *ngFor="let user of calling.participant | slice:3:7; let i = index;">
         <video [id]="user.ref_id" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
           <source src="./images/vidd.mp4" type="video/mp4" />

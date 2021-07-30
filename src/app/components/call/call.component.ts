@@ -331,7 +331,6 @@ export class CallComponent implements OnInit {
     const user = this.AllUsers.find(user => user.ref_id == response.participant);
     this.calling.participant.push(user);
 
-
     setTimeout(() => {
       this.calling.participant.push(user);
     }, 1000);
@@ -356,6 +355,7 @@ export class CallComponent implements OnInit {
       const textmsg = user + ' ' + 'has joined';
       this.toastr.success(textmsg);
     });
+    this.startWatch();
     this.changeDetector.detectChanges();
   }
 
@@ -405,15 +405,12 @@ export class CallComponent implements OnInit {
   }
 
   isHidePaginationBtn(): boolean {
-    return this.calling.templateName != 'groupVideoCall' || this.calling.participant.length < 5;
+    return this.calling.templateName != 'groupVideoCall' || this.calling.participant.length < 4;
   }
 
   isHideAudioPagination = false;
-
   isHideAudioPaginationBtn(): boolean {
-    this.isHideAudioPagination = this.calling.templateName != 'groupOngoingAudioCall ' || this.calling.participant.length < 5;
-    return this.isHideAudioPagination;
+    return !(this.calling.templateName == 'groupOngoingAudioCall' && this.calling.participant.length > 4);
   }
-
 
 }
