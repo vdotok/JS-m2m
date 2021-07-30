@@ -330,23 +330,6 @@ export class CallComponent implements OnInit {
   addParticipant(response) {
     const user = this.AllUsers.find(user => user.ref_id == response.participant);
     this.calling.participant.push(user);
-
-    setTimeout(() => {
-      this.calling.participant.push(user);
-    }, 1000);
-
-    setTimeout(() => {
-      this.calling.participant.push(user);
-    }, 2000);
-
-    setTimeout(() => {
-      this.calling.participant.push(user);
-    }, 3000);
-
-    setTimeout(() => {
-      this.calling.participant.push(user);
-    }, 4000);
-
     this.changeDetector.detectChanges();
     setTimeout(() => {
       this.changeDetector.detectChanges();
