@@ -103,6 +103,10 @@ export class CallComponent implements OnInit {
       console.error("groupCall response", response);
       switch (response.type) {
         case "CALL_RECEIVED":
+          if (this.inCall()) {
+            this.toastr.warning("Opps!", "InComming Call")
+            return;
+          }
           this.screen = 'MAIN'
           this.calling.callerName = this.findUserName(response.from);
           this.calling.templateName = response.call_type == 'video' ? 'groupIncommingVideoCall' : 'groupIncommingAudioCall';
@@ -115,6 +119,7 @@ export class CallComponent implements OnInit {
           this.addParticipant(response);
           break;
         case "PARTICIPANT_LEFT":
+          console.error("removeParticipant", response);
           this.removeParticipant(response);
           break;
         case "PARTICIPANT_STATUS":

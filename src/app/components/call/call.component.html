@@ -54,7 +54,7 @@
   </div>
   <div class="col-sm-8 rightSide" [hidden]="isHideChatScreen()">
     <div class="rightSideHeader">
-      <p class="roomNameText text-capitalize" *ngIf="calling.callerName">
+      <p class="roomNameText text-capitalize" *ngIf="calling.callerName && calling.templateName != 'noCall'">
         {{ calling.callerName }}
       </p>
       <p class="text-capitalize" style="margin-left: 25px;font-family: inter-regular;font-size: 21px;" *ngIf="callTime">
@@ -197,7 +197,7 @@
       <div [ngClass]="groupOutgoingVideoCall ? 'singleVideoAlone' :'singleVideo' ">
         <audio id="localAudio" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
-          <source src="./assets/images/vidd.mp4" type="video/mp4" />
+          <source src="" type="video/mp4" />
         </audio>
         <p class="bigName">{{ currentUserData.full_name }}</p>
         <div class="newdetailsWrapper">
@@ -216,7 +216,7 @@
 
         <audio [id]="user.ref_id" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
-          <source src="./assets/images/vidd.mp4" type="video/mp4" />
+          <source src="" type="video/mp4" />
         </audio>
         <p class="bigName"> {{ user.full_name }}</p>
         <div class="newdetailsWrapper">
@@ -329,7 +329,7 @@
       <div [ngClass]="groupOutgoingVideoCall ? 'singleVideoAlone' :'singleVideo' ">
         <video id="localVideo" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
-          <source src="./assets/images/vidd.mp4" type="video/mp4" />
+          <source src="" type="video/mp4" />
         </video>
         <p class="bigName">{{ currentUserData.full_name }}</p>
         <div class="newdetailsWrapper">
@@ -347,7 +347,7 @@
       <div class="singleVideo" *ngFor="let user of calling.participant | slice:0:3; let i = index;">
         <video [id]="user.ref_id" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
-          <source src="./assets/images/vidd.mp4" type="video/mp4" />
+          <source src="" type="video/mp4" />
         </video>
         <p class="bigName">{{ user.full_name }}</p>
         <div class="newdetailsWrapper">
@@ -363,7 +363,7 @@
       <div class="singleVideo" *ngFor="let user of calling.participant | slice:3:7; let i = index;">
         <video [id]="user.ref_id" autoplay muted height="100%" width="100%"
           style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
-          <source src="./images/vidd.mp4" type="video/mp4" />
+          <source src="" type="video/mp4" />
         </video>
         <p class="bigName">{{ user.full_name }}</p>
         <div class="newdetailsWrapper">
