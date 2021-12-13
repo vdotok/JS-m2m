@@ -16,6 +16,9 @@ export class PubsubService {
     });
     this.Client.on("connected", (res) => {
       let user = StorageService.getUserData();
+      console.log('*before Register==>',user.ref_id.toString(),
+      user.authorization_token.toString());
+      
       this.Client.Register(
         user.ref_id.toString(),
         user.authorization_token.toString()
