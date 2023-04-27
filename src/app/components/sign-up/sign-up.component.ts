@@ -50,7 +50,7 @@ export class SignUpComponent implements OnInit {
     FormsHandler.validateForm(this.loginForm);
     if (this.loginForm.invalid) return;
     const saveData = this.loginForm.value;
-    saveData.project_id = '6NE92I';
+    saveData.project_id = '1RN1RP';
     this.loading = true;
     this.formError = null;
     this.auth.signup(saveData).subscribe(v => {
