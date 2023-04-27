@@ -23,7 +23,7 @@ export class CallComponent implements OnInit {
   @ViewChild('groupOngoingAudioCall') groupOngoingAudioCall: TemplateRef<any>;
   @ViewChild('groupIncommingVideoCall') groupIncommingVideoCall: TemplateRef<any>;
   @ViewChild('groupVideoCall') groupVideoCall: TemplateRef<any>;
-  @ViewChild('searchInput') searchInput: ElementRef;
+  //@ViewChild('searchInput') searchInput: ElementRef;
   currentUserName = StorageService.getAuthUsername();
   currentUserData = StorageService.getUserData();
   threadType = 'THREAD';
