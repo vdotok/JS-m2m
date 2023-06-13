@@ -50,7 +50,7 @@ export class CallComponent implements OnInit {
     isOnInProgressCamara: true,
     isOnInProgressMicrophone: true
   }
-
+  session_UUID: any;
   get selectedTemplate() {
     const templateList = {
       noCall: this.noCall,
@@ -100,7 +100,7 @@ export class CallComponent implements OnInit {
     });
 
     this.pubsubService.Client.on("groupCall", response => {
-      console.error("groupCall response", response);
+      console.log("**** Call response: \n\n", response, "\n");
       switch (response.type) {
         case "CALL_RECEIVED":
           if (this.inCall()) {
@@ -109,14 +109,17 @@ export class CallComponent implements OnInit {
           }
           this.screen = 'MAIN'
           this.calling.callerName = this.findUserName(response.from);
-          this.calling.templateName = response.call_type == 'video' ? 'groupIncommingVideoCall' : 'groupIncommingAudioCall';
-          this.calling.call_type = response.call_type;
+          this.calling.templateName = response.callType == 'video' ? 'groupIncommingVideoCall' : 'groupIncommingAudioCall'; //call_type
+          this.calling.call_type = response.callType; //call_type
+          this.session_UUID = response.uuid; //added by me
+
           this.changeDetector.detectChanges();
           break;
         case "NEW_PARTICIPANT":
           this.calling.templateName = this.calling.call_type == 'video' ? 'groupVideoCall' : 'groupOngoingAudioCall';
           this.groupOutgoingVideoCall = false;
           this.addParticipant(response);
+          // this.session_UUID = response.uuid; //added by me
           break;
         case "PARTICIPANT_LEFT":
           console.error("removeParticipant", response);
@@ -126,6 +129,9 @@ export class CallComponent implements OnInit {
           const displaystyle = response.video_status ? 'block' : 'none';
           if (document.getElementById(response.participant)) document.getElementById(response.participant).style.display = displaystyle;
           break;
+        case "CALL_ENDED":
+          this.session_UUID = "";
+          break;        
       }
     });
 
@@ -258,11 +264,13 @@ export class CallComponent implements OnInit {
 
   acceptcall() {
     if (this.inProgressCall()) return;
+    console.log("*** acceptcall:  \n\n", this.calling);
+    
     this.calling.templateName = this.calling.call_type == 'video' ? 'groupVideoCall' : 'groupOngoingAudioCall';
     this.changeDetector.detectChanges();
     const params = {
       localVideo: document.getElementById("localVideo"),
-      call_type: this.calling.call_type
+      callType: this.calling.call_type  //call_type
     }
     this.changeDetector.detectChanges();
     this.groupOutgoingVideoCall = false;
@@ -285,14 +293,20 @@ export class CallComponent implements OnInit {
     this.changeDetector.detectChanges();
     const p = group['participants'].filter(g => g.ref_id != this.currentUserName).map(g => g.ref_id);
     const params = {
-      call_type: "video",
+      callType: "video", //call_type
       localVideo: document.getElementById("localVideo"),
       to: [...p],
     }
-    this.pubsubService.groupCall(params);
+    this.pubsubService.groupCall(params).then((res) => {
+      console.log("*** uuid\n\n: ", res); 
+      this.session_UUID = res;
+
+    })
   }
 
   startAudioCall(group) {
+    console.log("*** startAudioCall", group);
+    
     if (this.inCall()) return;
     this.calling.call_type = 'audio';
     this.screen = 'MAIN';
@@ -300,14 +314,19 @@ export class CallComponent implements OnInit {
     this.calling['callerName'] = group['chatTitle'];
     const participants = group['participants'].filter(g => g.ref_id != this.currentUserName).map(g => g.ref_id);
     const params = {
-      call_type: "audio",
+      callType: "audio", //call_type
       localVideo: document.getElementById("localAudio"),
       to: [...participants],
     }
-    this.pubsubService.groupCall(params);
+    this.pubsubService.groupCall(params).then((res) => {
+      console.log("*** uuid\n\n: ", res); 
+      this.session_UUID = res;
+    })
   }
 
   changeSettings(filed) {
+    console.log("changeSettings mic uuid: \n", this.session_UUID);
+    
     this.settings[filed] = !this.settings[filed];
     switch (filed) {
       case 'isOnInProgressCamara':
@@ -318,9 +337,13 @@ export class CallComponent implements OnInit {
         document.getElementById('localNameHolder').style.display = displayNamestyle;
         break;
       case 'isOnInProgressMicrophone':
-        this.settings[filed] ? this.pubsubService.setMicUnmute() : this.pubsubService.setMicMute();
+
+        this.settings[filed] ? this.pubsubService.setMicUnmute(this.session_UUID) : this.pubsubService.setMicMute(this.session_UUID);
         const enabled = this.settings[filed];
         const audiotrack: any = (<HTMLInputElement>document.getElementById("localAudio"));
+
+        console.log("*** mute called or not: \n", this.session_UUID, filed, this.settings[filed], audiotrack);
+
         if (audiotrack && audiotrack.audioTracks) {
           audiotrack.audioTracks[0].enabled = enabled;
         }

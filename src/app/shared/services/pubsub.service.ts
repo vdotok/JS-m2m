@@ -9,10 +9,11 @@ export class PubsubService {
 
   public initConfigure(): void {
     const user = StorageService.getUserData();
-    this.Client = new CVDOTOK.ManyToMany({
+    this.Client = new CVDOTOK.Client({
       projectId: "1RN1RP",
       host: `${user.media_server_map.complete_address}`,
-      stunServer: `${user.stun_server_map.complete_address}`
+      stunServer: `${user.stun_server_map.complete_address}`,
+      ignorePublicIP: true
     });
     this.Client.on("connected", (res) => {
       let user = StorageService.getUserData();
@@ -26,11 +27,20 @@ export class PubsubService {
     });
   }
 
-  groupCall(params): void {
-    this.Client.GroupCall(params);
+  public groupCall(params): any {
+    console.log("*** in group call", params);
+    return this.Client.GroupCall(params);
   }
 
+
+
+
+
+
+  
   joinGroupCall(params): void {
+    console.log("*** joinGroupCall:\n", params);
+    
     this.Client.JoinGroupCall(params);
   }
 
@@ -46,12 +56,14 @@ export class PubsubService {
     this.Client.SetCameraOff();
   }
 
-  setMicMute(): void {
-    this.Client.SetMicMute();
+  setMicMute(uuid): void {
+    console.log("*** pubsub service setmute: \n", uuid);   
+    this.Client.SetMicMute(uuid);
   }
 
-  setMicUnmute(): void {
-    this.Client.SetMicUnmute();
+  setMicUnmute(uuid): void {
+    console.log("*** pubsub service setunmute: \n", uuid);
+    this.Client.SetMicUnmute(uuid);
   }
 
   setParticipantVideo(participant, vidio) {
