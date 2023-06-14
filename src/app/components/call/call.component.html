@@ -118,13 +118,12 @@
 </ng-template>
 
 <ng-template #groupOutgoingAudioCall>
-
   <div style="overflow: hidden; padding: 0px" class="messagesBox">
     <div class="callContainer2" style="overflow: auto">
       <div class="singleVideoAlone">
-        <audio autoplay muted height="100%" width="100%" style="object-fit: fill; position: absolute; z-index: 10001"
-          autoplay>
-        </audio>
+        <!-- <audio id="localAudio_outgoing" height="100%" width="100%" style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
+          <source src="" type="video/mp4" />
+        </audio> commented by RA-->
         <p class="bigName">{{ calling.callerName }}</p>
         <div class="newdetailsWrapper">
           <span class="nameContainer" style="color: #f2e33a; margin-right: 0px">Me</span>
@@ -190,15 +189,16 @@
     </div>
   </div> -->
 </ng-template>
-
+<!-- this audio tag is replaced from  #groupOngoingAudioCall to this position-->
+<audio id="localVideo" autoplay muted height="100%" width="100%"
+style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
+<source src="" type="video/mp4" />
+</audio>
 <ng-template #groupOngoingAudioCall>
   <div style="overflow: hidden;padding: 0px;" class="messagesBox">
     <div class="callContainer2" style="overflow: auto;" [hidden]="hideCallContainer2">
       <div [ngClass]="groupOutgoingVideoCall ? 'singleVideoAlone' :'singleVideo' ">
-        <audio id="localAudio" autoplay muted height="100%" width="100%"
-          style="object-fit: fill; position: absolute; z-index: 10001" autoplay>
-          <source src="" type="video/mp4" />
-        </audio>
+       
         <p class="bigName">{{ currentUserData.full_name }}</p>
         <div class="newdetailsWrapper">
           <span class="nameContainer" style="color: #f2e33a; margin-right: 0px">Me</span>

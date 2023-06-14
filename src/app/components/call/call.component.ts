@@ -116,6 +116,8 @@ export class CallComponent implements OnInit {
           this.changeDetector.detectChanges();
           break;
         case "NEW_PARTICIPANT":
+          console.log("*** NEW_PARTICIPANT ADDED: ", this.calling.call_type);
+          
           this.calling.templateName = this.calling.call_type == 'video' ? 'groupVideoCall' : 'groupOngoingAudioCall';
           this.groupOutgoingVideoCall = false;
           this.addParticipant(response);
@@ -134,15 +136,12 @@ export class CallComponent implements OnInit {
           break;        
       }
     });
-
   }
-
   ngAfterViewInit(): void {
     this.pubsubService.Client.on("authentication_error", (res: any) => {
       this.toastr.error("SDK Authentication Error", "Opps");
     });
   }
-
   deleteGroup(group) {
     this.loading = true;
     const playload = {
@@ -156,7 +155,6 @@ export class CallComponent implements OnInit {
       }
     });
   }
-
   openModal(content, group) {
     if (group.auto_created) {
       alert("You Can not change personal group name");
@@ -170,7 +168,6 @@ export class CallComponent implements OnInit {
       windowClass: 'dark-modal'
     });
   }
-
   editGroup() {
     FormsHandler.validateForm(this.groupForm);
     if (this.groupForm.invalid || this.loading) return;
@@ -185,7 +182,6 @@ export class CallComponent implements OnInit {
       }
     });
   }
-
   getAllGroups() {
     this.loading = true;
     this.svc.get('AllGroups').subscribe(v => {
@@ -202,35 +198,29 @@ export class CallComponent implements OnInit {
       this.changeDetector.detectChanges();
     });
   }
-
   findUserName(ref_id) {
     const user = FindArrayObject(this.AllUsers, 'ref_id', ref_id);
     return user ? user.full_name : 'Group A';
   }
-
   changeSidebar($event) {
     this.threadType = $event;
     if (this.threadType == 'THREAD') {
       this.getAllGroups();
     }
   }
-
   newGroup() {
     this.threadType = 'GROUP';
     this.changeDetector.detectChanges();
   }
-
   logout() {
     StorageService.clearLocalStorge();
     this.router.navigate(['login']);
   }
-
   rejectedCall() {
     this.calling.templateName = 'noCall';
     this.changeDetector.detectChanges();
-    this.pubsubService.Client.leaveGroupCall();
+    this.pubsubService.Client.leaveGroupCall(this.session_UUID); //added by me
   }
-
   resetCall() {
     this.settings = {
       isOnInProgressCamara: true,
@@ -250,18 +240,17 @@ export class CallComponent implements OnInit {
     if (this.countDownTime) this.countDownTime.unsubscribe();
     this.changeDetector.detectChanges();
   }
-
   stopCall() {
+    console.log("*** stopCall() === ", this.session_UUID);
+    
     this.calling.templateName = 'noCall';
-    this.pubsubService.leaveGroupCall();
+    this.pubsubService.leaveGroupCall(this.session_UUID); //added by me
     this.resetCall();
     this.changeDetector.detectChanges();
   }
-
   inCall(): boolean {
     return this.calling.templateName != 'noCall'
   }
-
   acceptcall() {
     if (this.inProgressCall()) return;
     console.log("*** acceptcall:  \n\n", this.calling);
@@ -289,6 +278,8 @@ export class CallComponent implements OnInit {
     this.screen = 'MAIN';
     this.groupOutgoingVideoCall = true;
     this.calling.templateName = 'groupVideoCall';
+    console.log("*** VIDEO CALL CASE: \n", document.getElementById("localVideo"));
+
     this.calling['callerName'] = group['chatTitle'];
     this.changeDetector.detectChanges();
     const p = group['participants'].filter(g => g.ref_id != this.currentUserName).map(g => g.ref_id);
@@ -305,17 +296,19 @@ export class CallComponent implements OnInit {
   }
 
   startAudioCall(group) {
-    console.log("*** startAudioCall", group);
-    
     if (this.inCall()) return;
     this.calling.call_type = 'audio';
     this.screen = 'MAIN';
     this.calling.templateName = 'groupOutgoingAudioCall';
+
     this.calling['callerName'] = group['chatTitle'];
+    this.changeDetector.detectChanges(); //added
     const participants = group['participants'].filter(g => g.ref_id != this.currentUserName).map(g => g.ref_id);
+    console.log("*** AUDIO CALL CASE: \n", document.getElementById("localVideo"));
+
     const params = {
       callType: "audio", //call_type
-      localVideo: document.getElementById("localAudio"),
+      localVideo: document.getElementById("localVideo"),
       to: [...participants],
     }
     this.pubsubService.groupCall(params).then((res) => {
@@ -325,7 +318,7 @@ export class CallComponent implements OnInit {
   }
 
   changeSettings(filed) {
-    console.log("changeSettings mic uuid: \n", this.session_UUID);
+    console.log("changeSettings == mic & camera ==: \n", this.session_UUID);
     
     this.settings[filed] = !this.settings[filed];
     switch (filed) {
@@ -342,7 +335,7 @@ export class CallComponent implements OnInit {
         const enabled = this.settings[filed];
         const audiotrack: any = (<HTMLInputElement>document.getElementById("localAudio"));
 
-        console.log("*** mute called or not: \n", this.session_UUID, filed, this.settings[filed], audiotrack);
+        console.log("*** mute called or not: \n", this.session_UUID, filed, "\n", this.settings[filed], "\n", audiotrack);
 
         if (audiotrack && audiotrack.audioTracks) {
           audiotrack.audioTracks[0].enabled = enabled;
@@ -350,11 +343,9 @@ export class CallComponent implements OnInit {
         break;
     }
   }
-
   isShowVideo() {
     return this.calling.templateName != 'groupVideoCall' || this.calling.call_type != 'video';
   }
-
   addParticipant(response) {
     const user = this.AllUsers.find(user => user.ref_id == response.participant);
     this.calling.participant.push(user);
@@ -369,7 +360,6 @@ export class CallComponent implements OnInit {
     this.startWatch();
     this.changeDetector.detectChanges();
   }
-
   removeParticipant(response) {
     const index = this.calling.participant.findIndex(user => user.ref_id == response.participant);
     const user = this.findUserName(response.participant);
@@ -383,19 +373,15 @@ export class CallComponent implements OnInit {
     }
     this.changeDetector.detectChanges();
   }
-
   inProgressCall() {
     return this.calling.templateName == 'groupVideoCall' || this.calling.templateName == 'groupOngoingAudioCall';
   }
-
   isHideThread() {
     return isMobile() ? this.screen != 'LISTING' : false;
   }
-
   isHideChatScreen() {
     return isMobile() ? this.screen != 'MAIN' : false;
   }
-
   isHideRemoteVideo(): boolean {
     const ishide = !(this.calling.templateName == 'groupVideoCall' && this.calling.call_type == 'video');
     return ishide;

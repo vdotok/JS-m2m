@@ -44,8 +44,8 @@ export class PubsubService {
     this.Client.JoinGroupCall(params);
   }
 
-  leaveGroupCall(): void {
-    this.Client.LeaveGroupCall();
+  leaveGroupCall(uuid): void {
+    this.Client.LeaveGroupCall(uuid);
   }
 
   setCameraOn(): void {

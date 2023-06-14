@@ -2201,6 +2201,7 @@ class Client extends events_1.EventEmitter {
         let uUID = new Date().getTime().toString();
         params.uUID = uUID;
         this.localVideos[uUID] = params.localVideo;
+        console.log("*** initializing m2m instance in GroupCall funca\n\n\n", manyTomany);
         this.manyToMany = manyTomany;
         this.isManyToMany = true;
         this.videoStatus[uUID] = params.callType != "audio";
@@ -2239,8 +2240,14 @@ class Client extends events_1.EventEmitter {
     SetParticipantVideo(refId, partiVideo) {
         this.manyToMany.SetParticipantVideo(refId, partiVideo);
     }
-    LeaveGroupCall() {
-        this.manyToMany.LeaveGroupCall();
+    LeaveGroupCall(uuid) {
+      console.log("*** in sdk lgc: \n\n", this);
+      if(Object.keys(this.manyToMany).length === 0){
+        let m2m = new ManyToMany_1.default(this);
+        this.manyToMany = m2m;
+      }
+      
+      this.manyToMany.LeaveGroupCall(uuid);
     }
     Disconnect() {
         this.cleanIntervals();
@@ -28761,14 +28768,16 @@ class ManyToMany extends events_1.EventEmitter {
             this.localVideo.srcObject.getVideoTracks()[0].enabled = false;
         }
     }
-    LeaveGroupCall() {
+    LeaveGroupCall(uuid) {
         let response = {
             "type": "request",
             "requestType": "session_cancel",
             "requestId": new Date().getTime().toString(),
-            "sessionUuid": this.callSession,
+            "sessionUuid": this.callSession?this.callSession:uuid,
             "mcToken": this.McToken
         };
+      console.log("*** LeaveGroupCall of m2m class called on receiver side\n", response,"\n\n", this, "\n\n", uuid);
+
         this.SendPacket(response);
         this.DisposeWebrtc(false);
     }
