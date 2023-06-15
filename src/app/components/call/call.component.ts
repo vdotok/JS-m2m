@@ -140,6 +140,7 @@ export class CallComponent implements OnInit {
       }
     });
   }
+  
   ngAfterViewInit(): void {
     this.pubsubService.Client.on("authentication_error", (res: any) => {
       this.toastr.error("SDK Authentication Error", "Opps");
