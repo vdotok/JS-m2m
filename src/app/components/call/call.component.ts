@@ -100,7 +100,7 @@ export class CallComponent implements OnInit {
     });
 
     this.pubsubService.Client.on("groupCall", response => {
-      console.log("**** Call response: \n\n", response, "\n");
+      console.log("**** Call response: \n", response, "\n");
       switch (response.type) {
         case "CALL_RECEIVED":
           if (this.inCall()) {
@@ -140,7 +140,7 @@ export class CallComponent implements OnInit {
       }
     });
   }
-  
+
   ngAfterViewInit(): void {
     this.pubsubService.Client.on("authentication_error", (res: any) => {
       this.toastr.error("SDK Authentication Error", "Opps");
