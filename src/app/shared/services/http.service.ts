@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class HttpService implements HttpInterceptor {
-    private baseUrl = environment.apiBaseUrl;
+    private baseUrl = environment.apiBaseUrl + environment.version;
 
     constructor(
         private toastr: ToastrService,

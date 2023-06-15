@@ -1,6 +1,8 @@
 import { Injectable, Output } from '@angular/core';
 import { StorageService } from './storage.service';
 declare const CVDOTOK: any;
+import { PROJECT_ID } from 'src/constants/const';
+
 
 @Injectable()
 export class PubsubService {
@@ -10,7 +12,7 @@ export class PubsubService {
   public initConfigure(): void {
     const user = StorageService.getUserData();
     this.Client = new CVDOTOK.Client({
-      projectId: "1RN1RP",
+      projectId: PROJECT_ID, //'1RN1RP';
       host: `${user.media_server_map.complete_address}`,
       stunServer: `${user.stun_server_map.complete_address}`,
       ignorePublicIP: true

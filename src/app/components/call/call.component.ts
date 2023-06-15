@@ -133,6 +133,9 @@ export class CallComponent implements OnInit {
           break;
         case "CALL_ENDED":
           this.session_UUID = "";
+          break;
+        case "CALL_STARTED":
+          this.startWatch();
           break;        
       }
     });
@@ -268,9 +271,11 @@ export class CallComponent implements OnInit {
   }
 
   startWatch() {
-    if (!this.callTime) {
-      this.countDownTime = timer(0, 1000).subscribe(() => ++this.callTime);
+    if(this.countDownTime) {
+      this.countDownTime.unsubscribe()
+      this.callTime = 0
     }
+    this.countDownTime = timer(0, 1000).subscribe(() => ++this.callTime);
   }
 
   startVideoCall(group) {
@@ -361,8 +366,10 @@ export class CallComponent implements OnInit {
     this.changeDetector.detectChanges();
   }
   removeParticipant(response) {
-    const index = this.calling.participant.findIndex(user => user.ref_id == response.participant);
-    const user = this.findUserName(response.participant);
+    console.log("*** in remove participant func == PARTICIPANT_LEFT: \n\n\n", response);
+    
+    const index = this.calling.participant.findIndex(user => user.ref_id == response.from); //user.ref_id == response.participant
+    const user = this.findUserName(response.from);   //response.participant
     if (user && user != 'Group A') {
       const textmsg = user + ' ' + 'has left';
       this.toastr.success(textmsg);

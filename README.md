@@ -1,15 +1,15 @@
 # Vdotok JS Many-to-Many Audio/Video Call
 
-This is a demo project to demonstrate “Group Call” using Angular 9+.
+This is a demo project to demonstrate “Many to Many Group Call” using Angular 9+.
 
 ## Live Demo
 
-Click <a href="https://m2m.vdotok.com" target="_blank" title="Chat Demo">here</a> to visit the live demo of VdoTok many-to-many group call.
+Click <a href="https://m2m.vdotok.com" target="_blank" title="Chat Demo">here</a> to visit the live demo of VdoTok Many-to-Many Group call.
 
 ## Prerequisites:
 
-- Node v4.x.x or later
-- npm v3.x.x or later
+- Node v16.x.x or later
+- npm v7.x.x or later
 - git version any
 
 To verify the version of Node and npm, open **Terminal/Console** window and run `node -v` and `npm –v`. Older versions produce errors.
@@ -22,9 +22,6 @@ We recommend <a href="https://github.com/nvm-sh/nvm" target="_blank">nvm </a> fo
 
 <br/>
 
-## Sign up to get credentials i.e Project ID, Authentication Token.
-
-Register at <a href="https://userpanel.vdotok.com/norgic/chatSDK" target="_blank">VdoTok</a> to get **Authentication Token** and **Project ID**.
 
 ## Setting up the local environment
 
@@ -47,7 +44,7 @@ You can use the Angular CLI to create projects, generate application and library
 > To install the Angular CLI, open a terminal window (ctrl + shift + c) and run the following command:
 
 ```shell
-   npm install –g @angular/cli
+   npm install -g @angular/cli
 ```
 
 Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Setup</a> for more information.
@@ -60,44 +57,58 @@ Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Set
 
 ```shell
     git clone https://github.com/vdotok/JS-m2m.git
-    cd my-proj
 ```
 
-Register at <a href="https://userpanel.vdotok.com/overview" target="_blank">VdoTok</a> to get **Authentication Token** and **Project ID**.
 
-1. Click on this link -> https://vdotok.com/ in Chrome.
+- Move from you current directory i-e, **my-proj** to the **JS-m2m** directory.
+
+```shell
+    cd JS-m2m
+```
+
+</br>
+
+
+## Sign up to get credentials i.e Project ID, and API URL.
+
+Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Project ID** and **API URL** and
+
+1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184070841-f9b91f46-93df-4047-acfb-4739fd207aaa.jpg)
 
-2. This will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
+
+2. Click on the "TRY FOR FREE" button, this will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184070989-e8b26d85-6e64-4ef3-b6d7-56449738236c.jpg)
 
-3. After successfully sign up User navigates to the main dashboad of VDOTOK. Where user can find the ProjectID and Api Key.
+3. After successfully sign up, user navigates to the main dashboad of VDOTOK where the user can find the ProjectID, and Api Key.
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
-#### After successful registration, you can update the existing projectID with your own projectID.
+After successful registration, you can update the existing projectID with your own projectID, given in point no. 2 in the above attached screenshot
 
 <br/>
 
-## Add PROJECT ID and AUTHENTICATION Token.
+## Add PROJECT ID and API URL.
 
-- For Many to Many call in the application, You can update the projectID by following these steps. ( JS-M2M -> src -> app -> shared -> services -> pubsub.service.ts ).
+For Many to Many call in the application, You can update the projectID by following these steps. 
 
-You have to Update Project_id at the Login and Signup request by following these steps.
+- Go to the file ( JS-M2M -> src -> constants -> const.ts ).
 
-- At Login request. ( JS-M2M -> src -> app -> components -> login -> login.component.ts )
-- At Signup request. ( JS-M2M -> src -> app -> components -> sign-up -> sign-up.component.ts )
+- Replace the **PROJECT_ID** constant with your project ID.
 
-After replacing the projectID at all the above places, compile and run the project.
 
 ### Base URL
 
-You have to update BaseUrl with your own apiBaseUrl. You can update **apiBaseUrl** by following these steps.
+You have to update BaseUrl with your own apiBaseUrl. You can update **apiBaseUrl** by following these steps:
 
-- In environment.prod.ts File, (JS-M2M -> src -> environments -> environment.prod.ts)
-- In environment.ts File, (JS-M2M -> src -> environments -> environment.ts)
+- Go to environment.prod.ts file, ( JS-M2M -> src -> environments -> environment.prod.ts ), replace the **apiBaseUrl** with your BaseUrl
+
+- Go to environment.ts file, ( JS-M2M -> src -> environments -> environment.ts ), replace the **apiBaseUrl** with your BaseUrl
+
+</br>
+
 
 ## Install npm packages
 
@@ -107,45 +118,18 @@ Please refer to the above-stated npm and nvm version notes.
 
 ```shell
   npm install
+```
+
+- Now run the following command to run the project
+
+```shell
   ng serve
 ```
 
-- Open browser, application is running at **http://localhost:4200**
+- Open your browser, your application is running at **http://localhost:4200**
 
 - Create **New Account** using Sign-up Form, and use the application
 
-### How to Generate and Install Build:
+</br>
 
-Follow the commands below to generate a “build”
 
-```shell
-  ng build
-  ng build --aot --configuration production --build-optimizer --outputHashing=all
-```
-
-### How to Configure SDK:
-
-Add SDK into your **index.html** file. Declare a variable for your component or service:
-`declare const MVDOTOK: any;`
-
-User provides config to initiate the SDK
-
-```shell
-const Client = new MVDOTOK.Client({
-      projectID: "****",
-      secret: "********************",
-    });
-    Client.on("authenticated", (res) => {
-      let user = StorageService.getUserData();
-      this.Client.Register(user.ref_id.toString(), user.authorization_token.toString());
-    });
-```
-
-After Successful configuation, you can run the projcet locally by using this command.
-
-```shell
-    npm start or
-    ng serve
-```
-
-Now open the browser and you can see the application at http://localhost:4200
