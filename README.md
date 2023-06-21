@@ -1,4 +1,3 @@
-<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-m2m/assets/134290022/a775cde3-b0d9-4c1f-ba66-b397c6a8eb00">
 # Vdotok JS Many-to-Many Audio/Video Call
 
 This is a demo project to demonstrate “Many to Many Group Call” using Angular 9+.
