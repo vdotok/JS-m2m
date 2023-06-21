@@ -4,7 +4,7 @@ This is a demo project to demonstrate “Many to Many Group Call” using Angula
 
 ## Live Demo
 
-Click <a href="https://m2m.vdotok.com" target="_blank" title="Chat Demo">here</a> to visit the live demo of VdoTok Many-to-Many Group call.
+Click <a href="https://many2many.vdotok.com" target="_blank" title="Many2Many Call Demo">here</a> to visit the live demo of VdoTok Many-to-Many Group call.
 
 ## Prerequisites:
 
