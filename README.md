@@ -12,7 +12,7 @@ Click <a href="https://m2m.vdotok.com" target="_blank" title="Chat Demo">here</a
 - npm v7.x.x or later
 - git version any
 
-To verify the version of Node and npm, open **Terminal/Console** window and run `node -v` and `npm –v`. Older versions produce errors.
+To verify the version of Node and npm, open **Terminal/Console** window and run `node -v` and `npm –v`. Old versions produce errors.
 
 Click <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">here</a> to download and install the latest versions of Node and npm.
 
@@ -33,13 +33,13 @@ Angular requires an active LTS or maintenance LTS version of Node. For more info
 
 ### npm package manager
 
-Angular, the Angular CLI, and Angular applications depend npm packages on <a href="https://docs.npmjs.com/getting-started/what-is-npm">npm packages</a> for many features and functions. To download and install npm packages, you need an npm Package Manager. This guide uses the npm client command line interface, which is installed with Node by default. To check that you have the npm client installed, run `npm -v` in a terminal window.
+Angular, the Angular CLI, and Angular applications depend on <a href="https://docs.npmjs.com/getting-started/what-is-npm">npm packages</a> for various features and functions. To download and install npm packages, you need an npm Package Manager. This guide uses the npm client command line interface, which is installed with Node by default. To check that you have the npm client installed, run `npm -v` in a terminal window.
 
 <br/>
 
 ## Install the Angular CLI
 
-You can use the Angular CLI to create projects, generate application and library code, and perform a variety of ongoing development tasks such as testing, bundling, and deployment.
+The Angular CLI is used to create projects, generate application and library code, and perform a variety of ongoing development tasks such as testing, bundling, and deployment.
 
 > To install the Angular CLI, open a terminal window (ctrl + shift + c) and run the following command:
 
@@ -47,20 +47,20 @@ You can use the Angular CLI to create projects, generate application and library
    npm install -g @angular/cli
 ```
 
-Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Setup</a> for more information.
+You can also visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Setup</a> for more information.
 
 <br/>
 
 ## Clone Repo
 
-- Clone this **Repository URL** into new project folder (e.g., my-proj).
+- Clone this **Repository URL** into new Project folder (e.g., my-proj).
 
 ```shell
     git clone https://github.com/vdotok/JS-m2m.git
 ```
 
 
-- Move from you current directory i-e, **my-proj** to the **JS-m2m** directory.
+- Move from your current directory i-e, **my-proj** to the **JS-m2m** directory.
 
 ```shell
     cd JS-m2m
@@ -71,7 +71,7 @@ Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Set
 
 ## Sign up to get credentials i.e Project ID, and API URL.
 
-Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Project ID** and **API URL** and
+Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Project ID** and **API URL**, by following the below steps:
 
 1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
 
@@ -82,17 +82,18 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Pro
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184070989-e8b26d85-6e64-4ef3-b6d7-56449738236c.jpg)
 
-3. After successfully sign up, user navigates to the main dashboad of VDOTOK where the user can find the ProjectID, and Api Key.
+3. After successfully signing up with VdoTok, the user navigates to the main Dashboad of VDOTOK where the user can find the ProjectID, and Api url.
 
+
+4. The User can replace the existing ProjectID with their own ProjectID, as shown in the point # 2 in the below screen.
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
-After successful registration, you can update the existing projectID with your own projectID, given in point no. 2 in the above attached screenshot
 
 <br/>
 
 ## Add PROJECT ID and API URL.
 
-For Many to Many call in the application, You can update the projectID by following these steps. 
+To integrate many-2-many call with JS Call SDK, the user can update the projectID by following these steps:
 
 - Go to the file ( JS-M2M -> src -> constants -> const.ts ).
 
@@ -101,11 +102,11 @@ For Many to Many call in the application, You can update the projectID by follow
 
 ### Base URL
 
-You have to update BaseUrl with your own apiBaseUrl. You can update **apiBaseUrl** by following these steps:
+The user is required to update API-Base-URL with their own base URL. This can be done by following these steps:
 
-- Go to environment.prod.ts file, ( JS-M2M -> src -> environments -> environment.prod.ts ), replace the **apiBaseUrl** with your BaseUrl
+- Go to environment.prod.ts file, ( JS-M2M -> src -> environments -> environment.prod.ts ), and replace the **apiBaseUrl** with your BaseUrl
 
-- Go to environment.ts file, ( JS-M2M -> src -> environments -> environment.ts ), replace the **apiBaseUrl** with your BaseUrl
+- Go to environment.ts file, ( JS-M2M -> src -> environments -> environment.ts ), and replace the **apiBaseUrl** with your BaseUrl
 
 </br>
 
@@ -114,13 +115,13 @@ You have to update BaseUrl with your own apiBaseUrl. You can update **apiBaseUrl
 
 Please refer to the above-stated npm and nvm version notes.
 
-- Install the npm packages described in the `package.json` and verify that it works:
+- Run the following command to install all the dependencies:
 
 ```shell
   npm install
 ```
 
-- Now run the following command to run the project
+- Now run the following command to run the project:
 
 ```shell
   ng serve
@@ -129,6 +130,17 @@ Please refer to the above-stated npm and nvm version notes.
 - Open your browser, your application is running at **http://localhost:4200**
 
 - Create **New Account** using Sign-up Form, and use the application
+
+</br>
+
+
+## How to Generate Build:
+
+Run the below command to generate a “build”: 
+
+```shell
+  npm run build
+```
 
 </br>
 

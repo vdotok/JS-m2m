@@ -2195,18 +2195,20 @@ class Client extends events_1.EventEmitter {
     }
     ////////////////////////////////////////////////////////////
     /////////////// MANY TO MANY CALLS
+    //Client class method
     GroupCall(params) {
         this.currentFromUser = this.currentUser;
         let manyTomany = new ManyToMany_1.default(this);
         let uUID = new Date().getTime().toString();
         params.uUID = uUID;
         this.localVideos[uUID] = params.localVideo;
-        console.log("*** initializing m2m instance in GroupCall funca\n\n\n", manyTomany);
+        
         this.manyToMany = manyTomany;
         this.isManyToMany = true;
         this.videoStatus[uUID] = params.callType != "audio";
         this.audioStatus[uUID] = 1;
         this.sessionInfo[uUID] = { callType: "many_to_many", isPeer: params.isPeer || 0, isInitiator: 1, call_state: "STARTING", participants: [] };
+        console.log("**** GroupCall func in SDK:\n\n\n", params);
         return this.manyToMany.GroupCall(params);
     }
     JoinGroupCall(params) {
@@ -3668,7 +3670,7 @@ class CallRequestModel {
      */
     SendCallRequest(server) {
         let reqMessage = JSON.stringify(this.ReqPacket);
-        console.log("Send===CallRequest", reqMessage);
+        console.log("****  === Send CallRequest\n\n", this.ReqPacket);
         server.send(reqMessage);
     }
 }
@@ -28446,6 +28448,7 @@ class ManyToMany extends events_1.EventEmitter {
         regMessage.authorizationToken = authorizationToken;
         regMessage.SendRegisterRequest(this.ws);
     }
+    //ManytoMany class method
     GroupCall(params) {
         return new Promise((resolve, reject) => {
             var _a, _b;
@@ -28484,11 +28487,13 @@ class ManyToMany extends events_1.EventEmitter {
                 options.audioStream = params.audioStream;
             }
             let webRtcPeer = WebRtcPeerHelper_1.WebRtcPeerHelper.WebRtcPeerSendonly(options, (error) => {
+              console.log("**** Generating Offer to send Local video", options);
+
                 if (error) {
                     reject({ status: false, message: error.message ? error.message : error });
                     return console.error(error);
                 }
-                console.log("## Generating Offer to send Local video", this.currentUser);
+                console.log("**** Generating Offer to send Local video", params);
                 webRtcPeer.generateOffer((error, offerSdp) => {
                     this.onManyToManyOfferCall(error, offerSdp, params);
                     if (error) {
@@ -28505,6 +28510,19 @@ class ManyToMany extends events_1.EventEmitter {
             }
         });
     }
+
+
+
+
+
+
+
+
+
+
+
+    
+
     JoinGroupCall(params, callSession) {
         var _a, _b;
         this.mediaType = params.callType;
@@ -28558,6 +28576,7 @@ class ManyToMany extends events_1.EventEmitter {
      * @returns
      */
     onManyToManyOfferCall(error, offerSdp, params) {
+      console.log("**** onManyToManyOfferCall:\n\n", offerSdp, "\n", params);
         if (error) {
             EventHandler_1.default.OnOfferIncomingCall(error, this);
             return console.error('Error generating the call offer ', error);
@@ -28586,9 +28605,21 @@ class ManyToMany extends events_1.EventEmitter {
             callRequest.requestType = 'session_invite';
             delete callRequest.referenceId;
         }
+        //New change
+        if(params.data) {
+          callRequest.data = params.data;
+        }
         callRequest.SendCallRequest(this.ws);
         console.log(' OnOfferCall :: :: ::', params.callType);
     }
+
+
+
+
+
+
+
+
     onJoinManyToManyOfferCall(error, offerSdp, params) {
         var _a;
         if (error) {
