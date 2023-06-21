@@ -1,3 +1,4 @@
+<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-m2m/assets/134290022/a775cde3-b0d9-4c1f-ba66-b397c6a8eb00">
 # Vdotok JS Many-to-Many Audio/Video Call
 
 This is a demo project to demonstrate “Many to Many Group Call” using Angular 9+.
@@ -72,7 +73,7 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Pro
 
 1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
 
-<img width="1721" alt="SignupOnVdotok" src="https://github.com/vdotok/JS-m2m/assets/134290022/f30d1fa7-edcc-44ab-bb15-6e024997e09b">
+<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-m2m/assets/134290022/a775cde3-b0d9-4c1f-ba66-b397c6a8eb00">
 
 2. Click on the "TRY FOR FREE" button, this will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
