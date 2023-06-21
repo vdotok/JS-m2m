@@ -12,7 +12,7 @@ export class PubsubService {
   public initConfigure(): void {
     const user = StorageService.getUserData();
     this.Client = new CVDOTOK.Client({
-      projectId: PROJECT_ID, //'1RN1RP';
+      projectId: PROJECT_ID, //'1KMMRG';
       host: `${user.media_server_map.complete_address}`,
       stunServer: `${user.stun_server_map.complete_address}`,
       ignorePublicIP: true
