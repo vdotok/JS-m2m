@@ -22,7 +22,6 @@ We recommend <a href="https://github.com/nvm-sh/nvm" target="_blank">nvm </a> fo
 
 <br/>
 
-
 ## Setting up the local environment
 
 To install Angular on your local system, you need the following:
@@ -59,7 +58,6 @@ Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Set
     git clone https://github.com/vdotok/JS-m2m.git
 ```
 
-
 - Move from you current directory i-e, **my-proj** to the **JS-m2m** directory.
 
 ```shell
@@ -68,7 +66,6 @@ Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Set
 
 </br>
 
-
 ## Sign up to get credentials i.e Project ID, and API URL.
 
 Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Project ID** and **API URL** and
@@ -76,7 +73,6 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Pro
 1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
 
 <img width="1721" alt="SignupOnVdotok" src="https://github.com/vdotok/JS-m2m/assets/134290022/f30d1fa7-edcc-44ab-bb15-6e024997e09b">
-
 
 2. Click on the "TRY FOR FREE" button, this will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
@@ -92,12 +88,11 @@ After successful registration, you can update the existing projectID with your o
 
 ## Add PROJECT ID and API URL.
 
-For Many to Many call in the application, You can update the projectID by following these steps. 
+For Many to Many call in the application, You can update the projectID by following these steps.
 
 - Go to the file ( JS-M2M -> src -> constants -> const.ts ).
 
 - Replace the **PROJECT_ID** constant with your project ID.
-
 
 ### Base URL
 
@@ -108,7 +103,6 @@ You have to update BaseUrl with your own apiBaseUrl. You can update **apiBaseUrl
 - Go to environment.ts file, ( JS-M2M -> src -> environments -> environment.ts ), replace the **apiBaseUrl** with your BaseUrl
 
 </br>
-
 
 ## Install npm packages
 
@@ -132,4 +126,8 @@ Please refer to the above-stated npm and nvm version notes.
 
 </br>
 
+### Integrate SDK in your project:
 
+To setup audio/video call in your project please follow the detailed documentation here
+
+Click on this link -> <a href = "https://doc.vdotok.com/" target = "_blank"> https://doc.vdotok.com/</a>
