@@ -86,7 +86,7 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Pro
 
 
 4. The User can replace the existing ProjectID with their own ProjectID, as shown in the point # 2 in the below screen.
-   ![My Remote Image](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
+![My Remote Image](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
 
 <br/>
