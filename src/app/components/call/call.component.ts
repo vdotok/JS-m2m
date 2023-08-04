@@ -1,33 +1,50 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { Router } from '@angular/router';
-import { FindArrayObject, isMobile } from 'src/app/shared/helpers/helpersFunctions';
-import { BaseService } from 'src/app/shared/services/base.service';
-import { PubsubService } from 'src/app/shared/services/pubsub.service';
-import { StorageService } from 'src/app/shared/services/storage.service';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from "@angular/core";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { Router } from "@angular/router";
+import {
+  FindArrayObject,
+  isMobile,
+} from "src/app/shared/helpers/helpersFunctions";
+import { BaseService } from "src/app/shared/services/base.service";
+import { PubsubService } from "src/app/shared/services/pubsub.service";
+import { StorageService } from "src/app/shared/services/storage.service";
 import { timer, Subscription } from "rxjs";
-import { ToastrService } from 'ngx-toastr';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import FormsHandler from 'src/app/shared/FormsHandler/FormsHandler';
+import { ToastrService } from "ngx-toastr";
+import {
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import FormsHandler from "src/app/shared/FormsHandler/FormsHandler";
 
 @Component({
-  selector: 'call',
-  templateUrl: './call.component.html',
-  styleUrls: ['./call.component.scss']
+  selector: "call",
+  templateUrl: "./call.component.html",
+  styleUrls: ["./call.component.scss"],
 })
 export class CallComponent implements OnInit {
-  @ViewChild('noCall') noCall: TemplateRef<any>;
-  @ViewChild('groupIncommingAudioCall') groupIncommingAudioCall: TemplateRef<any>;
-  @ViewChild('groupOutgoingAudioCall') groupOutgoingAudioCall: TemplateRef<any>;
-  @ViewChild('groupOngoingAudioCall') groupOngoingAudioCall: TemplateRef<any>;
-  @ViewChild('groupIncommingVideoCall') groupIncommingVideoCall: TemplateRef<any>;
-  @ViewChild('groupVideoCall') groupVideoCall: TemplateRef<any>;
+  @ViewChild("noCall") noCall: TemplateRef<any>;
+  @ViewChild("groupIncommingAudioCall")
+  groupIncommingAudioCall: TemplateRef<any>;
+  @ViewChild("groupOutgoingAudioCall") groupOutgoingAudioCall: TemplateRef<any>;
+  @ViewChild("groupOngoingAudioCall") groupOngoingAudioCall: TemplateRef<any>;
+  @ViewChild("groupIncommingVideoCall")
+  groupIncommingVideoCall: TemplateRef<any>;
+  @ViewChild("groupVideoCall") groupVideoCall: TemplateRef<any>;
   //@ViewChild('searchInput') searchInput: ElementRef;
   currentUserName = StorageService.getAuthUsername();
   currentUserData = StorageService.getUserData();
-  threadType = 'THREAD';
-  screen = 'LISTING';
+  threadType = "THREAD";
+  screen = "LISTING";
   dialogRef: any;
   loading = true;
   groupForm: UntypedFormGroup;
@@ -38,18 +55,18 @@ export class CallComponent implements OnInit {
   groupOutgoingVideoCall = false;
   sdkconnected = false;
   activeChat: any = {
-    chatHistory: []
+    chatHistory: [],
   };
   calling = {
     participant: [],
-    call_type: 'video',
-    templateName: 'noCall',
-    callerName: ''
-  }
+    call_type: "video",
+    templateName: "noCall",
+    callerName: "",
+  };
   settings = {
     isOnInProgressCamara: true,
-    isOnInProgressMicrophone: true
-  }
+    isOnInProgressMicrophone: true,
+  };
   session_UUID: any;
   get selectedTemplate() {
     const templateList = {
@@ -58,9 +75,9 @@ export class CallComponent implements OnInit {
       groupOutgoingAudioCall: this.groupOutgoingAudioCall,
       groupOngoingAudioCall: this.groupOngoingAudioCall,
       groupIncommingVideoCall: this.groupIncommingVideoCall,
-      groupVideoCall: this.groupVideoCall
-    }
-    return templateList[this.calling['templateName']];
+      groupVideoCall: this.groupVideoCall,
+    };
+    return templateList[this.calling["templateName"]];
   }
 
   constructor(
@@ -71,27 +88,33 @@ export class CallComponent implements OnInit {
     public dialog: MatDialog,
     private changeDetector: ChangeDetectorRef,
     private toastr: ToastrService,
-    private modalService: NgbModal,
+    private modalService: NgbModal
   ) {
-    this.groupForm = this._fb.group({
-      'group_id': new UntypedFormControl('', [Validators.required]),
-      'group_title': new UntypedFormControl('', [Validators.required, Validators.maxLength(100)]),
-    }, { updateOn: 'change' });
+    this.groupForm = this._fb.group(
+      {
+        group_id: new UntypedFormControl("", [Validators.required]),
+        group_title: new UntypedFormControl("", [
+          Validators.required,
+          Validators.maxLength(100),
+        ]),
+      },
+      { updateOn: "change" }
+    );
     this.pubsubService.initConfigure();
   }
 
   ngOnInit() {
-    this.svc.post('AllUsers').subscribe(v => {
+    this.svc.post("AllUsers").subscribe((v) => {
       if (v && v.status == 200) {
         this.AllUsers = v.users;
       }
     });
 
-    this.pubsubService.Client.on("register", response => {
+    this.pubsubService.Client.on("register", (response) => {
       console.error("register response", response);
     });
 
-    this.pubsubService.Client.on("connected", response => {
+    this.pubsubService.Client.on("connected", (response) => {
       this.sdkconnected = true;
       console.error("connected response", response);
       if (!this.AllGroups.length) {
@@ -99,17 +122,22 @@ export class CallComponent implements OnInit {
       }
     });
 
-    this.pubsubService.Client.on("groupCall", response => {
+    this.pubsubService.Client.on("groupCall", (response) => {
       console.log("**** Call response: \n", response, "\n");
       switch (response.type) {
         case "CALL_RECEIVED":
           if (this.inCall()) {
-            this.toastr.warning("Opps!", "InComming Call")
+            this.toastr.warning("Opps!", "InComming Call");
             return;
           }
-          this.screen = 'MAIN'
-          this.calling.callerName = this.findUserName(response.from);
-          this.calling.templateName = response.callType == 'video' ? 'groupIncommingVideoCall' : 'groupIncommingAudioCall'; //call_type
+          this.screen = "MAIN";
+          if(response.data) {
+            this.calling.callerName = response.data.groupName;//this.findUserName(response.from);
+          }
+          this.calling.templateName =
+            response.callType == "video"
+              ? "groupIncommingVideoCall"
+              : "groupIncommingAudioCall"; //call_type
           this.calling.call_type = response.callType; //call_type
           this.session_UUID = response.uuid; //added by me
 
@@ -117,8 +145,11 @@ export class CallComponent implements OnInit {
           break;
         case "NEW_PARTICIPANT":
           console.log("*** NEW_PARTICIPANT ADDED: ", this.calling.call_type);
-          
-          this.calling.templateName = this.calling.call_type == 'video' ? 'groupVideoCall' : 'groupOngoingAudioCall';
+
+          this.calling.templateName =
+            this.calling.call_type == "video"
+              ? "groupVideoCall"
+              : "groupOngoingAudioCall";
           this.groupOutgoingVideoCall = false;
           this.addParticipant(response);
           // this.session_UUID = response.uuid; //added by me
@@ -128,15 +159,17 @@ export class CallComponent implements OnInit {
           this.removeParticipant(response);
           break;
         case "PARTICIPANT_STATUS":
-          const displaystyle = response.video_status ? 'block' : 'none';
-          if (document.getElementById(response.participant)) document.getElementById(response.participant).style.display = displaystyle;
+          const displaystyle = response.video_status ? "block" : "none";
+          if (document.getElementById(response.participant))
+            document.getElementById(response.participant).style.display =
+              displaystyle;
           break;
         case "CALL_ENDED":
           this.session_UUID = "";
           break;
         case "CALL_STARTED":
           this.startWatch();
-          break;        
+          break;
       }
     });
   }
@@ -149,13 +182,13 @@ export class CallComponent implements OnInit {
   deleteGroup(group) {
     this.loading = true;
     const playload = {
-      group_id: group.id
-    }
-    this.svc.post('DeleteGroup', playload).subscribe(v => {
+      group_id: group.id,
+    };
+    this.svc.post("DeleteGroup", playload).subscribe((v) => {
       if (v && v.status == 200) {
         this.loading = false;
         this.getAllGroups();
-        this.toastr.success('The group has been deleted!', 'Success!');
+        this.toastr.success("The group has been deleted!", "Success!");
       }
     });
   }
@@ -164,12 +197,12 @@ export class CallComponent implements OnInit {
       alert("You Can not change personal group name");
       return;
     }
-    group['group_id'] = group.id
+    group["group_id"] = group.id;
     this.groupForm.reset(group);
     this.dialogRef = this.modalService.open(content, {
       centered: true,
-      backdrop: 'static',
-      windowClass: 'dark-modal'
+      backdrop: "static",
+      windowClass: "dark-modal",
     });
   }
   editGroup() {
@@ -177,25 +210,28 @@ export class CallComponent implements OnInit {
     if (this.groupForm.invalid || this.loading) return;
     const playload = this.groupForm.value;
     this.loading = true;
-    this.svc.post('RenameGroup', playload).subscribe(v => {
+    this.svc.post("RenameGroup", playload).subscribe((v) => {
       if (v && v.status == 200) {
         this.getAllGroups();
         this.dialogRef.close();
         this.loading = false;
-        this.toastr.success('The group has been updated!', 'Success!');
+        this.toastr.success("The group has been updated!", "Success!");
       }
     });
   }
   getAllGroups() {
     this.loading = true;
-    this.svc.get('AllGroups').subscribe(v => {
+    this.svc.get("AllGroups").subscribe((v) => {
       this.loading = false;
       if (v && v.status == 200) {
-        this.AllGroups = v.groups.map(chat => {
-          chat['chatTitle'] = chat.auto_created ? chat.participants[0]['full_name'] : chat.group_title;
-          chat['key'] = chat.channel_key;
-          chat['channel'] = chat.channel_name;
-          chat['ref_id'] = chat['participants'] && chat['participants'][0].ref_id;
+        this.AllGroups = v.groups.map((chat) => {
+          chat["chatTitle"] = chat.auto_created
+            ? chat.participants[0]["full_name"]
+            : chat.group_title;
+          chat["key"] = chat.channel_key;
+          chat["channel"] = chat.channel_name;
+          chat["ref_id"] =
+            chat["participants"] && chat["participants"][0].ref_id;
           return chat;
         });
       }
@@ -203,41 +239,41 @@ export class CallComponent implements OnInit {
     });
   }
   findUserName(ref_id) {
-    const user = FindArrayObject(this.AllUsers, 'ref_id', ref_id);
-    return user ? user.full_name : 'Group A';
+    const user = FindArrayObject(this.AllUsers, "ref_id", ref_id);
+    return user ? user.full_name : "Group A";
   }
   changeSidebar($event) {
     this.threadType = $event;
-    if (this.threadType == 'THREAD') {
+    if (this.threadType == "THREAD") {
       this.getAllGroups();
     }
   }
   newGroup() {
-    this.threadType = 'GROUP';
+    this.threadType = "GROUP";
     this.changeDetector.detectChanges();
   }
   logout() {
     StorageService.clearLocalStorge();
-    this.router.navigate(['login']);
+    this.router.navigate(["login"]);
   }
   rejectedCall() {
-    this.calling.templateName = 'noCall';
+    this.calling.templateName = "noCall";
     this.changeDetector.detectChanges();
     this.pubsubService.Client.leaveGroupCall(this.session_UUID); //added by me
   }
   resetCall() {
     this.settings = {
       isOnInProgressCamara: true,
-      isOnInProgressMicrophone: true
-    }
+      isOnInProgressMicrophone: true,
+    };
     this.calling = {
       participant: [],
-      call_type: 'video',
-      templateName: 'noCall',
-      callerName: ''
-    }
+      call_type: "video",
+      templateName: "noCall",
+      callerName: "",
+    };
     this.callTime = 0;
-    this.screen = 'LISTING';
+    this.screen = "LISTING";
     this.groupOutgoingVideoCall = false;
     this.hideCallContainer2 = false;
     this.hideCallContainer3 = true;
@@ -246,25 +282,28 @@ export class CallComponent implements OnInit {
   }
   stopCall() {
     console.log("*** stopCall() === ", this.session_UUID);
-    
-    this.calling.templateName = 'noCall';
+
+    this.calling.templateName = "noCall";
     this.pubsubService.leaveGroupCall(this.session_UUID); //added by me
     this.resetCall();
     this.changeDetector.detectChanges();
   }
   inCall(): boolean {
-    return this.calling.templateName != 'noCall'
+    return this.calling.templateName != "noCall";
   }
   acceptcall() {
     if (this.inProgressCall()) return;
     console.log("*** acceptcall:  \n\n", this.calling);
-    
-    this.calling.templateName = this.calling.call_type == 'video' ? 'groupVideoCall' : 'groupOngoingAudioCall';
+
+    this.calling.templateName =
+      this.calling.call_type == "video"
+        ? "groupVideoCall"
+        : "groupOngoingAudioCall";
     this.changeDetector.detectChanges();
     const params = {
       localVideo: document.getElementById("localVideo"),
-      callType: this.calling.call_type  //call_type
-    }
+      callType: this.calling.call_type, //call_type
+    };
     this.changeDetector.detectChanges();
     this.groupOutgoingVideoCall = false;
     this.pubsubService.joinGroupCall(params);
@@ -272,76 +311,113 @@ export class CallComponent implements OnInit {
   }
 
   startWatch() {
-    if(this.countDownTime) {
-      this.countDownTime.unsubscribe()
-      this.callTime = 0
+    if (this.countDownTime) {
+      this.countDownTime.unsubscribe();
+      this.callTime = 0;
     }
     this.countDownTime = timer(0, 1000).subscribe(() => ++this.callTime);
   }
 
   startVideoCall(group) {
     if (this.inCall()) return;
-    this.screen = 'MAIN';
+    this.screen = "MAIN";
     this.groupOutgoingVideoCall = true;
-    this.calling.templateName = 'groupVideoCall';
-    console.log("*** VIDEO CALL CASE: \n", document.getElementById("localVideo"));
+    this.calling.templateName = "groupVideoCall";
+    console.log(
+      "*** VIDEO CALL CASE: \n",
+      document.getElementById("localVideo")
+    );
 
-    this.calling['callerName'] = group['chatTitle'];
+    this.calling["callerName"] = group["chatTitle"];
     this.changeDetector.detectChanges();
-    const p = group['participants'].filter(g => g.ref_id != this.currentUserName).map(g => g.ref_id);
+    const p = group["participants"]
+      .filter((g) => g.ref_id != this.currentUserName)
+      .map((g) => g.ref_id);
     const params = {
       callType: "video", //call_type
       localVideo: document.getElementById("localVideo"),
       to: [...p],
-    }
+      data: {
+        groupName: this.calling.callerName,//"testingm2m",
+        calleName: "",//"nativeios", //calleName is empty in m2m call
+        groupAutoCreatedValue: "",//"0", //
+      },
+    };
     this.pubsubService.groupCall(params).then((res) => {
-      console.log("*** uuid\n\n: ", res); 
+      console.log("*** uuid\n\n: ", res);
       this.session_UUID = res;
-
-    })
+    });
   }
 
   startAudioCall(group) {
     if (this.inCall()) return;
-    this.calling.call_type = 'audio';
-    this.screen = 'MAIN';
-    this.calling.templateName = 'groupOutgoingAudioCall';
+    this.calling.call_type = "audio";
+    this.screen = "MAIN";
+    this.calling.templateName = "groupOutgoingAudioCall";
 
-    this.calling['callerName'] = group['chatTitle'];
+    this.calling["callerName"] = group["chatTitle"];
     this.changeDetector.detectChanges(); //added
-    const participants = group['participants'].filter(g => g.ref_id != this.currentUserName).map(g => g.ref_id);
-    console.log("*** AUDIO CALL CASE: \n", document.getElementById("localVideo"));
+    const participants = group["participants"]
+      .filter((g) => g.ref_id != this.currentUserName)
+      .map((g) => g.ref_id);
+    console.log(
+      "*** AUDIO CALL CASE: \n",
+      document.getElementById("localVideo")
+    );
 
+    
     const params = {
       callType: "audio", //call_type
       localVideo: document.getElementById("localVideo"),
       to: [...participants],
-    }
+      data: {
+        groupName: this.calling.callerName,//"testingm2m",
+        calleName: "",//"nativeios", //calleName is empty in m2m call
+        groupAutoCreatedValue: "",//"0", //
+      },
+    };
+
+    console.log("****  start audio call", this);
+
     this.pubsubService.groupCall(params).then((res) => {
-      console.log("*** uuid\n\n: ", res); 
+      console.log("*** uuid\n\n: ", res);
       this.session_UUID = res;
-    })
+    });
   }
 
   changeSettings(filed) {
     console.log("changeSettings == mic & camera ==: \n", this.session_UUID);
-    
+
     this.settings[filed] = !this.settings[filed];
     switch (filed) {
-      case 'isOnInProgressCamara':
-        this.settings[filed] ? this.pubsubService.setCameraOn() : this.pubsubService.setCameraOff();
-        const displaystyle = this.settings[filed] ? 'block' : 'none';
-        const displayNamestyle = this.settings[filed] ? 'none' : 'block';
-        document.getElementById('localVideo').style.display = displaystyle;
-        document.getElementById('localNameHolder').style.display = displayNamestyle;
+      case "isOnInProgressCamara":
+        this.settings[filed]
+          ? this.pubsubService.setCameraOn()
+          : this.pubsubService.setCameraOff();
+        const displaystyle = this.settings[filed] ? "block" : "none";
+        const displayNamestyle = this.settings[filed] ? "none" : "block";
+        document.getElementById("localVideo").style.display = displaystyle;
+        document.getElementById("localNameHolder").style.display =
+          displayNamestyle;
         break;
-      case 'isOnInProgressMicrophone':
-
-        this.settings[filed] ? this.pubsubService.setMicUnmute(this.session_UUID) : this.pubsubService.setMicMute(this.session_UUID);
+      case "isOnInProgressMicrophone":
+        this.settings[filed]
+          ? this.pubsubService.setMicUnmute(this.session_UUID)
+          : this.pubsubService.setMicMute(this.session_UUID);
         const enabled = this.settings[filed];
-        const audiotrack: any = (<HTMLInputElement>document.getElementById("localAudio"));
+        const audiotrack: any = <HTMLInputElement>(
+          document.getElementById("localAudio")
+        );
 
-        console.log("*** mute called or not: \n", this.session_UUID, filed, "\n", this.settings[filed], "\n", audiotrack);
+        console.log(
+          "*** mute called or not: \n",
+          this.session_UUID,
+          filed,
+          "\n",
+          this.settings[filed],
+          "\n",
+          audiotrack
+        );
 
         if (audiotrack && audiotrack.audioTracks) {
           audiotrack.audioTracks[0].enabled = enabled;
@@ -350,29 +426,42 @@ export class CallComponent implements OnInit {
     }
   }
   isShowVideo() {
-    return this.calling.templateName != 'groupVideoCall' || this.calling.call_type != 'video';
+    return (
+      this.calling.templateName != "groupVideoCall" ||
+      this.calling.call_type != "video"
+    );
   }
   addParticipant(response) {
-    const user = this.AllUsers.find(user => user.ref_id == response.participant);
+    const user = this.AllUsers.find(
+      (user) => user.ref_id == response.participant
+    );
     this.calling.participant.push(user);
     this.changeDetector.detectChanges();
     setTimeout(() => {
       this.changeDetector.detectChanges();
-      this.pubsubService.setParticipantVideo(response.participant, document.getElementById(response.participant));
+      this.pubsubService.setParticipantVideo(
+        response.participant,
+        document.getElementById(response.participant)
+      );
       const user = this.findUserName(response.participant);
-      const textmsg = user + ' ' + 'has joined';
+      const textmsg = user + " " + "has joined";
       this.toastr.success(textmsg);
     });
     this.startWatch();
     this.changeDetector.detectChanges();
   }
   removeParticipant(response) {
-    console.log("*** in remove participant func == PARTICIPANT_LEFT: \n\n\n", response);
-    
-    const index = this.calling.participant.findIndex(user => user.ref_id == response.from); //user.ref_id == response.participant
-    const user = this.findUserName(response.from);   //response.participant
-    if (user && user != 'Group A') {
-      const textmsg = user + ' ' + 'has left';
+    console.log(
+      "*** in remove participant func == PARTICIPANT_LEFT: \n\n\n",
+      response
+    );
+
+    const index = this.calling.participant.findIndex(
+      (user) => user.ref_id == response.from
+    ); //user.ref_id == response.participant
+    const user = this.findUserName(response.from); //response.participant
+    if (user && user != "Group A") {
+      const textmsg = user + " " + "has left";
       this.toastr.success(textmsg);
     }
     this.calling.participant.splice(index, 1);
@@ -382,19 +471,24 @@ export class CallComponent implements OnInit {
     this.changeDetector.detectChanges();
   }
   inProgressCall() {
-    return this.calling.templateName == 'groupVideoCall' || this.calling.templateName == 'groupOngoingAudioCall';
+    return (
+      this.calling.templateName == "groupVideoCall" ||
+      this.calling.templateName == "groupOngoingAudioCall"
+    );
   }
   isHideThread() {
-    return isMobile() ? this.screen != 'LISTING' : false;
+    return isMobile() ? this.screen != "LISTING" : false;
   }
   isHideChatScreen() {
-    return isMobile() ? this.screen != 'MAIN' : false;
+    return isMobile() ? this.screen != "MAIN" : false;
   }
   isHideRemoteVideo(): boolean {
-    const ishide = !(this.calling.templateName == 'groupVideoCall' && this.calling.call_type == 'video');
+    const ishide = !(
+      this.calling.templateName == "groupVideoCall" &&
+      this.calling.call_type == "video"
+    );
     return ishide;
   }
-
 
   hideCallContainer2 = false;
   hideCallContainer3 = true;
@@ -410,12 +504,17 @@ export class CallComponent implements OnInit {
   }
 
   isHidePaginationBtn(): boolean {
-    return this.calling.templateName != 'groupVideoCall' || this.calling.participant.length < 4;
+    return (
+      this.calling.templateName != "groupVideoCall" ||
+      this.calling.participant.length < 4
+    );
   }
 
   isHideAudioPagination = false;
   isHideAudioPaginationBtn(): boolean {
-    return !(this.calling.templateName == 'groupOngoingAudioCall' && this.calling.participant.length > 4);
+    return !(
+      this.calling.templateName == "groupOngoingAudioCall" &&
+      this.calling.participant.length > 4
+    );
   }
-
 }
